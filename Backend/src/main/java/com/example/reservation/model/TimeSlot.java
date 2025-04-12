@@ -20,6 +20,6 @@ public class TimeSlot {
     private LocalDateTime endTime;
 
     @ManyToOne
-    @JoinColumn(name = "resource_id")
-    private Resource resource;
+    @JoinColumn(name = "room_id")
+    private Room room;
 }
