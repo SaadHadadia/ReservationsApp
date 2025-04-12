@@ -1,2 +1,6 @@
-package com.example.reservation.model;public class Role {
+package com.example.reservation.model;
+
+public enum Role {
+    USER,
+    ADMIN
 }
