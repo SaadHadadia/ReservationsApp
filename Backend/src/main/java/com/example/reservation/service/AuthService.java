@@ -1,5 +1,6 @@
 package com.example.reservation.service;
 
+import com.example.reservation.exception.ResourceNotFoundException;
 import com.example.reservation.model.User;
 import com.example.reservation.repository.UserRepository;
 import com.example.reservation.security.JwtService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class AuthService {
@@ -31,22 +33,29 @@ public class AuthService {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Authentification de l'utilisateur et génération du JWT
     public AuthResponse authenticate(AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
 
-        String jwtToken = jwtService.generateToken(authRequest.getUsername()); // Use the username (email) directly
+        User user = userRepository.findByEmail(authRequest.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole().name()); // Include role in token
 
         return new AuthResponse(jwtToken);
     }
 
     // Enregistrer un nouvel utilisateur
     public AuthResponse register(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encode the password
         userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user.getEmail());
+        String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole().name()); // Include role in token
 
         return new AuthResponse(jwtToken);
     }

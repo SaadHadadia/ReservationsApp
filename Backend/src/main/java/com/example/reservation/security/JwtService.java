@@ -1,5 +1,6 @@
 package com.example.reservation.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,16 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateToken(String username, String role) {
+        return Jwts.builder()
+                .setSubject(username) // Set the email as the subject
+                .claim("role", role) // Add the role as a custom claim
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
     // Extract username from token
     public String extractUsername(String token) {
         String userEmail = Jwts.parserBuilder()
@@ -35,6 +46,15 @@ public class JwtService {
                 .getSubject(); // Extract the subject (email)
         System.out.println("Extracted email from token: " + userEmail); // Debug log
         return userEmail;
+    }
+
+    public String extractRole(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class); // Extract the role claim
     }
 
     // Validate token

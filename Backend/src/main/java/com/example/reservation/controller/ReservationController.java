@@ -16,9 +16,9 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @PostMapping
-    public ResponseEntity<Reservation> create(@RequestBody Reservation reservation) {
-        return ResponseEntity.ok(reservationService.create(reservation));
+    @PostMapping("/{roomId}")
+    public ResponseEntity<Reservation> create(@PathVariable Long roomId, @RequestBody Reservation reservation) {
+        return ResponseEntity.ok(reservationService.reserveRoom(reservation, roomId));
     }
 
     @GetMapping
