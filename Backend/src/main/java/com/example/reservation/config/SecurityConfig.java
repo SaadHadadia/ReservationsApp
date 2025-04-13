@@ -42,7 +42,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll() // Autoriser les endpoints d'authentification
+                        .requestMatchers("/api/reservations/**").hasRole("USER") // Restreindre les réservations aux utilisateurs avec le rôle USER
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
