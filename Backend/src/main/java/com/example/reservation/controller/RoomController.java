@@ -2,6 +2,7 @@ package com.example.reservation.controller;
 
 import com.example.reservation.model.Room;
 import com.example.reservation.service.RoomService;
+import com.example.reservation.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,12 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<Room> create(@RequestBody Room room) {
-        return ResponseEntity.ok(roomService.create(room));
+    public ResponseEntity<?> create(@RequestBody Room room) {
+        try {
+            return ResponseEntity.ok(roomService.create(room));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid request: " + e.getMessage());
+        }
     }
 
     @GetMapping
@@ -27,18 +32,32 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Room> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(roomService.getById(id));
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(roomService.getById(id));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Room> update(@PathVariable Long id, @RequestBody Room room) {
-        return ResponseEntity.ok(roomService.update(id, room));
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Room room) {
+        try {
+            return ResponseEntity.ok(roomService.update(id, room));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid request: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        roomService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            roomService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 }
