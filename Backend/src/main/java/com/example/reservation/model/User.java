@@ -1,6 +1,7 @@
 package com.example.reservation.model;
 
 import com.example.reservation.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,9 +32,11 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore // Prevent infinite loop
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore // Prevent infinite loop
     private List<Notification> notifications;
 
     public String getFullName() {
@@ -62,6 +65,10 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public List<Reservation> getReservations() {

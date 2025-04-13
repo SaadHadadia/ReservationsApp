@@ -1,6 +1,7 @@
 package com.example.reservation.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,6 +13,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference // Prevent infinite loop
     private User user;
 
     @ManyToOne
