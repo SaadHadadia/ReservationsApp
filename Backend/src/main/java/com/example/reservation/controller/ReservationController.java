@@ -1,6 +1,7 @@
 package com.example.reservation.controller;
 
 import com.example.reservation.model.Reservation;
+import com.example.reservation.model.TimeSlot;
 import com.example.reservation.service.ReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,13 @@ public class ReservationController {
     }
 
     @PostMapping("/{roomId}")
-    public ResponseEntity<Reservation> create(@PathVariable Long roomId, @RequestBody Reservation reservation) {
-        return ResponseEntity.ok(reservationService.reserveRoom(reservation, roomId));
+    public ResponseEntity<?> create(@PathVariable Long roomId, @RequestBody TimeSlot timeSlot) {
+        try {
+            Reservation reservation = reservationService.reserveRoom(timeSlot, roomId);
+            return ResponseEntity.ok(reservation);
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping
