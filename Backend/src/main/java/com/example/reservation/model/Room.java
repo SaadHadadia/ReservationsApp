@@ -2,6 +2,7 @@ package com.example.reservation.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Room {
@@ -17,6 +18,7 @@ public class Room {
     private String location;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @JsonIgnore // Prevent infinite loop
     private List<Reservation> reservations;
 
     // Getters and Setters

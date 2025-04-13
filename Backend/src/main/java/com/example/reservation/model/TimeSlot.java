@@ -2,6 +2,7 @@ package com.example.reservation.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.LocalDateTime;
 
@@ -57,5 +58,6 @@ public class TimeSlot {
 
     @ManyToOne
     @JoinColumn(name = "room_id")
+    @JsonBackReference // Prevent infinite loop
     private Room room;
 }

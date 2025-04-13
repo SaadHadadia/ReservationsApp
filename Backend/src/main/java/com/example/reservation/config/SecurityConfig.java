@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // Autoriser les endpoints d'authentification
                         .requestMatchers("/api/reservations/**").hasRole("USER") // Restreindre les réservations aux utilisateurs avec le rôle USER
+                        .requestMatchers("/api/notifications/**").hasRole("ADMIN") // Restreindre aux administrateurs
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
