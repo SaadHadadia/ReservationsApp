@@ -45,19 +45,19 @@ public class AuthService {
         User user = userRepository.findByEmail(authRequest.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole().name()); // Include role in token
+        String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole().name());
 
-        return new AuthResponse(jwtToken);
+        return new AuthResponse(jwtToken, user);
     }
 
     // Enregistrer un nouvel utilisateur
     public AuthResponse register(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encode the password
-        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User savedUser = userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole().name()); // Include role in token
+        String jwtToken = jwtService.generateToken(savedUser.getEmail(), savedUser.getRole().name());
 
-        return new AuthResponse(jwtToken);
+        return new AuthResponse(jwtToken, savedUser);
     }
 
     public void authenticateUser(String userEmail, String jwt, HttpServletRequest request) {

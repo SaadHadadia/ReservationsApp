@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
+//@Builder
 public class TimeSlot {
 
     @Id
