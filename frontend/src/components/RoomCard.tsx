@@ -1,4 +1,3 @@
-
 import { Room } from "@/api/roomApi";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -11,14 +10,14 @@ interface RoomCardProps {
 export function RoomCard({ room }: RoomCardProps) {
   // Check if there are any available time slots today
   const today = new Date().toISOString().split('T')[0];
-  const todayAvailability = room.availability.find(a => a.date === today);
-  const hasAvailableSlots = todayAvailability?.timeSlots.some(slot => slot.isAvailable) || false;
+  const todayAvailability = room.availability?.find(a => a.date === today);
+  const hasAvailableSlots = todayAvailability?.timeSlots?.some(slot => slot.isAvailable) || false;
 
   return (
     <Link to={`/rooms/${room.id}`} className="room-card block overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <img
-          src={room.images[0] || "https://placehold.co/600x400?text=No+Image"}
+          src={room.images?.[0] || "https://placehold.co/600x400?text=No+Image"}
           alt={room.name}
           className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
         />
@@ -45,12 +44,12 @@ export function RoomCard({ room }: RoomCardProps) {
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-1">
-          {room.amenities.slice(0, 3).map((amenity, index) => (
+          {room.amenities?.slice(0, 3).map((amenity, index) => (
             <Badge key={index} variant="outline" className="capitalize">
               {amenity}
             </Badge>
           ))}
-          {room.amenities.length > 3 && (
+          {room.amenities && room.amenities.length > 3 && (
             <Badge variant="outline">+{room.amenities.length - 3} more</Badge>
           )}
         </div>

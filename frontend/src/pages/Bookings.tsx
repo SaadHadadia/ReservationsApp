@@ -1,10 +1,10 @@
-
 import { useEffect, useState } from "react";
 import { Reservation, reservationApi } from "@/api/reservationApi";
 import { ReservationCard } from "@/components/ReservationCard";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Loader, CalendarX } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -34,27 +34,64 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function Bookings() {
+  const navigate = useNavigate();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [isDeletingReservation, setIsDeletingReservation] = useState(false);
   
   useEffect(() => {
+    // Vérifier l'authentification
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication required",
+        description: "Please login to view your bookings.",
+      });
+      navigate('/login');
+      return;
+    }
+    
     fetchReservations();
-  }, []);
+  }, [navigate]);
   
   const fetchReservations = async () => {
     setIsLoading(true);
     try {
+      // Vérifier le token avant de faire la requête
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
       const data = await reservationApi.getUserReservations();
       setReservations(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching reservations:", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to load reservations",
-        description: "Please try again later.",
-      });
+      
+      if (error.response?.status === 403) {
+        toast({
+          variant: "destructive",
+          title: "Access Denied",
+          description: "You don't have permission to view reservations. Please contact support.",
+        });
+      } else if (error.response?.status === 401) {
+        toast({
+          variant: "destructive",
+          title: "Session Expired",
+          description: "Please login again to continue.",
+        });
+        navigate('/login');
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Failed to load reservations",
+          description: error.message || "Please try again later.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }

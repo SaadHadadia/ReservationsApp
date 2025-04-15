@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 import java.util.Arrays;
 
@@ -48,12 +49,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Autoriser les endpoints d'authentification
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/reservations/**").hasRole("USER") // Restreindre les réservations aux utilisateurs avec le rôle USER
-                        .requestMatchers("/api/notifications/**").hasRole("ADMIN") // Restreindre aux administrateurs
+                        .requestMatchers("/api/rooms/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/reservations/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/notifications/**").hasRole("ADMIN")
                         .requestMatchers("/health").permitAll()
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -89,7 +94,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Ajoutez votre frontend URL
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Ajoutez votre frontend URL
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

@@ -1,4 +1,3 @@
-
 import api from './axiosConfig';
 
 export interface User {
@@ -15,6 +14,13 @@ export interface UpdateUserData {
   role?: string;
 }
 
+export interface CreateUserData {
+  email: string;
+  password: string;
+  fullName: string;
+  role: string;
+}
+
 export const userApi = {
   getAllUsers: async (): Promise<User[]> => {
     const response = await api.get('/api/users');
@@ -23,6 +29,11 @@ export const userApi = {
 
   getUserById: async (id: string): Promise<User> => {
     const response = await api.get(`/api/users/${id}`);
+    return response.data;
+  },
+
+  createUser: async (userData: CreateUserData): Promise<User> => {
+    const response = await api.post('/api/users', userData);
     return response.data;
   },
 

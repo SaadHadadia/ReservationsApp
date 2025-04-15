@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { toast } from '@/components/ui/use-toast';
 
@@ -16,6 +15,9 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      // Si pas de token, on pourrait rediriger vers login
+      // Mais on laisse la requête échouer pour que le composant gère la redirection
     }
     return config;
   },
@@ -52,9 +54,10 @@ api.interceptors.response.use(
           break;
         
         case 403:
+          // Forbidden - User doesn't have permission
           toast({
             title: "Access denied",
-            description: "You don't have permission to access this resource.",
+            description: response.data?.message || "You don't have permission to access this resource.",
             variant: "destructive",
           });
           break;
@@ -63,7 +66,7 @@ api.interceptors.response.use(
           // Not found
           toast({
             title: "Resource not found",
-            description: "The requested resource does not exist.",
+            description: response.data?.message || "The requested resource does not exist.",
             variant: "destructive",
           });
           break;
@@ -72,7 +75,7 @@ api.interceptors.response.use(
           // Server error
           toast({
             title: "Server error",
-            description: "Something went wrong on our end. Please try again later.",
+            description: response.data?.message || "Something went wrong on our end. Please try again later.",
             variant: "destructive",
           });
           break;

@@ -24,6 +24,9 @@ public class Reservation {
     @JoinColumn(name = "time_slot_id")
     private TimeSlot timeSlot; // Nouvelle relation avec TimeSlot
 
+    private String purpose;
+    private Integer attendees;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -55,5 +58,21 @@ public class Reservation {
 
     public void setTimeSlot(TimeSlot timeSlot) {
         this.timeSlot = timeSlot;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public Integer getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(Integer attendees) {
+        this.attendees = attendees;
     }
 }

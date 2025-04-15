@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Room, RoomFilter, roomApi } from "@/api/roomApi";
 import { RoomCard } from "@/components/RoomCard";
@@ -118,7 +117,7 @@ export default function Dashboard() {
     if (date) {
       const dateString = date.toISOString().split('T')[0];
       filtered = filtered.filter(room => 
-        room.availability.some(a => a.date === dateString && a.timeSlots.some(slot => slot.isAvailable))
+        room.availability?.some(a => a.date === dateString && a.timeSlots?.some(slot => slot.isAvailable)) || false
       );
       activeFiltersList.push(`Date: ${formatDate(dateString)}`);
     }
@@ -126,7 +125,7 @@ export default function Dashboard() {
     // Filter by amenities
     if (amenities.length > 0) {
       filtered = filtered.filter(room => 
-        amenities.every(amenity => room.amenities.includes(amenity))
+        amenities.every(amenity => room.amenities?.includes(amenity))
       );
       activeFiltersList.push(`Amenities: ${amenities.length} selected`);
     }

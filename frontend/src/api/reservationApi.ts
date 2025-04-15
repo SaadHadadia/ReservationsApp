@@ -1,4 +1,3 @@
-
 import api from './axiosConfig';
 
 export interface Reservation {
@@ -24,6 +23,7 @@ export interface CreateReservationData {
   endTime: string;
   purpose: string;
   attendees: number;
+  userId?: string;
 }
 
 export interface UpdateReservationData {
@@ -37,7 +37,7 @@ export interface UpdateReservationData {
 
 export const reservationApi = {
   getUserReservations: async (): Promise<Reservation[]> => {
-    const response = await api.get('/api/reservations');
+    const response = await api.get('/api/reservations/user');
     return response.data;
   },
 
@@ -53,6 +53,11 @@ export const reservationApi = {
 
   createReservation: async (reservationData: CreateReservationData): Promise<Reservation> => {
     const response = await api.post('/api/reservations', reservationData);
+    return response.data;
+  },
+
+  createReservationAsAdmin: async (reservationData: CreateReservationData): Promise<Reservation> => {
+    const response = await api.post('/api/reservations/admin', reservationData);
     return response.data;
   },
 

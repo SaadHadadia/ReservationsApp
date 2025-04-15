@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Room, roomApi } from "@/api/roomApi";
@@ -166,8 +165,8 @@ export default function RoomDetail() {
         date: data.date,
         startTime: data.startTime,
         endTime: data.endTime,
-        purpose: data.purpose,
-        attendees: data.attendees,
+        purpose: data.purpose || "Default purpose",
+        attendees: data.attendees || 1,
       };
       
       await reservationApi.createReservation(reservationData);
